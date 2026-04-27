@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moje stránka</title>
+  </head>
+  <body>
+
+    <h2>registration</h2>
+    <br />
+
+    <form id="registrationForm">
+      <label for="regName">name:</label><br />
+      <input type="text" id="regName" name="name" /><br />
+
+      <label for="regPassword">password:</label><br />
+      <input type="password" id="regPassword" name="password" /><br />
+
+      <label for="password2">re-enter password:</label><br />
+      <input id="password2" type="password" name="password2" />
+
+      <button id="nameButton" type="submit">register</button>
+
+      <br />
+      <br />
+      <br />
+      <button onclick="window.location.href = '/'">home</button>
+
+      <p id="msgReg"></p>
+    </form>
+
+    <script>
+      const regNameInput = document.getElementById("regName");
+      const regPasswordInput = document.getElementById("regPassword");
+      const regPasswordInput2 = document.getElementById("password2");
+      const regTextOut = document.getElementById("msgReg");
+      const registrationForm = document.getElementById("registrationForm");
+
+      registrationForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        fetch("/registration", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: regNameInput.value,
+            password: regPasswordInput.value,
+            password2: regPasswordInput2.value,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              regTextOut.textContent = data.message;
+              regTextOut.style.color = "green";
+            } else {
+              regTextOut.textContent = data.message;
+              regTextOut.style.color = "red";
+            }
+          })
+          .catch(() => {
+            regTextOut.textContent = "Chyba spojení se serverem";
+            regTextOut.style.color = "red";
+          });
+      });
+    </script>
+  </body>
+</html>

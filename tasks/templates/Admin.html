@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin</title>
+  </head>
+  <body>
+    <h1>Admin</h1>
+
+    <form id="Admin">
+      <label for="user">user:</label><br />
+      <input type="text" id="user" name="user" /><br />
+
+      <label for="task">task:</label><br />
+      <input type="text" id="task" name="task" /><br />
+
+      <label for="desc">description:</label><br />
+      <input type="text" id="desc" name="desc" /><br />
+
+      <br />
+
+      <button type="submit">add task</button>
+    </form>
+
+    <p id="msg"></p>
+
+    <br />
+    <button onclick="window.location.href = '/'">home</button>
+
+    <script>
+      const Admin = document.getElementById("Admin");
+      const userText = document.getElementById("user");
+      const taskText = document.getElementById("task");
+      const descText = document.getElementById("desc");
+      const textOut = document.getElementById("msg");
+
+      Admin.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        fetch("/Admin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: userText.value,
+            task: taskText.value,
+            desc: descText.value,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            textOut.textContent = data.message;
+            textOut.style.color = data.success ? "green" : "red";
+          })
+          .catch(() => {
+            textOut.textContent = "Chyba spojení se serverem";
+            textOut.style.color = "red";
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Profile</title>
+  </head>
+  <body>
+    <h1>User Profile</h1>
+
+    <p>Logged user: {{ user_name }}</p>
+
+    <button onclick="window.location.href = '/'">home</button>
+    <button onclick="window.location.href = '/logout'">logout</button>
+
+    <h2>My tasks</h2>
+
+    {% if tasks %}
+      <ul>
+        {% for task in tasks %}
+          <li>
+            <strong>{{ task.title }}</strong><br />
+            {{ task.description }}<br />
+
+            <label>
+              Completed:
+              <input
+                type="checkbox"
+                data-id="{{ task.id_user_task }}"
+                {% if task.completed %}checked{% endif %}
+              />
+            </label>
+          </li>
+          <br />
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No tasks avaiable.</p>
+    {% endif %}
+
+    <p id="msg"></p>
+
+    <script>
+      const checkboxes = document.querySelectorAll("input[type='checkbox']");
+      const msg = document.getElementById("msg");
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          fetch("/task-completed", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id_user_task: checkbox.dataset.id,
+              completed: checkbox.checked,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              msg.textContent = data.message;
+              msg.style.color = data.success ? "green" : "red";
+            })
+            .catch(() => {
+              msg.textContent = "problem with connection to servers";
+              msg.style.color = "red";
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
