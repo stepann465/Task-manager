@@ -294,7 +294,8 @@ def Admin():
     })
 
 
+init_db()
+add_test_users()
+
 if __name__ == "__main__":
-    init_db()
-    add_test_users()
     aplikace.run(debug=True)
